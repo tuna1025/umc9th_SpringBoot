@@ -1,5 +1,6 @@
 package com.example.umc9th.global.apiPaylode;
 
+import com.example.umc9th.global.code.BaseErrorCode;
 import com.example.umc9th.global.code.BaseSuccessCode;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -28,9 +29,17 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> onSuccess(BaseSuccessCode code, T result) {
         return new ApiResponse<T>(true, code.getCode(), code.getMessage(), result);
     }
-    public static <T> ApiResponse<T> onFailure(BaseSuccessCode code, T result) {
+
+
+    //데이터 포함
+    public static <T> ApiResponse<T> onFailure(BaseErrorCode code, T result) {
         return new ApiResponse<T>(false, code.getCode(), code.getMessage(), result);
     }
+    //데이터가 없는 실패 응답 매서드
+    public static <T> ApiResponse<T> onFailure(BaseErrorCode code) {
+        return new ApiResponse<T>(false, code.getCode(), code.getMessage(), null);
+    }
+
 
 //    // 기본적으로 200 OK를 반환하는 매서드 성공했을때 응답
 //    public static <T> ApiResponse<T> onSuccess(T result) {
