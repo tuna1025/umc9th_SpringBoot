@@ -1,7 +1,7 @@
 package com.example.umc9th.domain.member.entity;
 
 import com.example.umc9th.domain.member.enums.Gender;
-import com.example.umc9th.global.entitiy.BaseEntity;
+import com.example.umc9th.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,9 +36,6 @@ public class Member extends BaseEntity{
 
     @Column(name = "point", nullable = false)
     private Integer point;
-
-    @Column(name = "social_uid", nullable = false)
-    private String socialUid;
 
     @Column(name = "address", nullable = false)
     private String address;

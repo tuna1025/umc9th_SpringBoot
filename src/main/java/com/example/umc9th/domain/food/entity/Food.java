@@ -1,6 +1,6 @@
-package com.example.umc9th.domain.member.entity;
+package com.example.umc9th.domain.food.entity;
 
-import com.example.umc9th.domain.member.enums.TermName;
+import com.example.umc9th.domain.food.enums.FoodName;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,13 +9,14 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-@Table(name = "term")
-public class Term {
+@Table(name = "food")
+public class Food {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
     @Enumerated(EnumType.STRING)
-    private TermName name;
+    private FoodName name;
+
 }
