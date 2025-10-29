@@ -17,18 +17,23 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MemberQueryServiceImpl {
+public class MemberQueryServiceImpl implements MemberQueryService {
 
     private final MemberRepository memberRepository;
     private final MemberMissionRepository memberMissionRepository;
 
+    @Override
     public Member getMyPageInfo(Long memberId) {
         return memberRepository.findMyPageInfo(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
+
+    @Override
     public List<MemberMission> getMyMissions(Member member, Long cursorId) {
         // 페이지 사이즈 10개 (LIMIT 10)
         return memberMissionRepository.findMyMissionsByCursor(member, cursorId, PageRequest.of(0, 10));
     }
+
+
 
 }
