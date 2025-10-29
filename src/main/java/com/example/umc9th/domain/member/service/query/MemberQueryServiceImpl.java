@@ -30,7 +30,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
     @Override
     public List<MemberMission> getMyMissions(Member member, Long cursorId) {
-        // 페이지 사이즈 10개 (LIMIT 10)
+        // 페이지 사이즈 10개 (LIMIT 10), 개인 미션은 개수가 적기때문에 첫번째 커서를 안주고 필요시 주면됨
         return memberMissionRepository.findMyMissionsByCursor(member, cursorId, PageRequest.of(0, 10));
     }
 
