@@ -30,7 +30,6 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
         SELECT DISTINCT m
         FROM Mission m
         JOIN FETCH m.store s
-        JOIN FETCH s.foodType ft
         LEFT JOIN MemberMission mm 
             ON mm.mission = m AND mm.member.id = :memberId
         WHERE s.location.id = :regionId
