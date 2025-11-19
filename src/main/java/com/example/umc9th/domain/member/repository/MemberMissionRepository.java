@@ -40,4 +40,6 @@ public interface MemberMissionRepository extends JpaRepository<MemberMission, St
             Pageable pageable
     ); // 커서 크기는 서비스레이어에서 정의
 
+    // 이미 도전중인지 확인
+    boolean existsByMemberIdAndMissionId(Long memberId, Long missionId);
 }
