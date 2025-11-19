@@ -28,6 +28,9 @@ public enum GeneralErrorCode implements BaseErrorCode {
             HttpStatus.INTERNAL_SERVER_ERROR,
             "COMMON500",
             "서버 내부 오류가 발생했습니다"),
+    VALID_FAIL(HttpStatus.BAD_REQUEST,
+            "COMMAND400",
+            "유효성 검증 실패");
     ;
 
     // 필요한 필드값 선언
