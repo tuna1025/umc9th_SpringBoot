@@ -1,6 +1,7 @@
 package com.example.umc9th.domain.mission.repository;
 
 import com.example.umc9th.domain.mission.entity.Mission;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -43,4 +44,8 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
             @Param("cursorId") Long cursorId,
             Pageable pageable
     );
+
+    // 가게별 미션 조회
+    Page<Mission> findAllByStoreId(Long storeId, Pageable pageable);
+
 }

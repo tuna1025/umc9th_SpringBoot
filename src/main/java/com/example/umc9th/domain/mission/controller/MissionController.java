@@ -1,30 +1,69 @@
 package com.example.umc9th.domain.mission.controller;
 
+import com.example.umc9th.domain.member.Exception.MemberSuccessCode;
 import com.example.umc9th.domain.member.entity.mapping.MemberMission;
+import com.example.umc9th.domain.member.service.query.MemberQueryService;
 import com.example.umc9th.domain.mission.converter.MissionConverter;
 import com.example.umc9th.domain.mission.dto.request.MissionRequestDTO;
 import com.example.umc9th.domain.mission.dto.response.MissionResponseDTO;
 import com.example.umc9th.domain.mission.exception.MissionSuccessCode;
 import com.example.umc9th.domain.mission.service.command.MissionCommandService;
+import com.example.umc9th.domain.store.service.query.StoreQueryService;
+import com.example.umc9th.global.annotation.CheckPage;
 import com.example.umc9th.global.apiPaylode.ApiResponse;
+import com.example.umc9th.global.exception.GeneralSuccessCode;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 public class MissionController {
 
     private final MissionCommandService missionCommandService;
+    private final MemberQueryService memberQueryService;
 
     @PostMapping("/missions/challenge")
     public ApiResponse<MissionResponseDTO.ChallengeMissionResultDTO> challengeMission(
             @RequestBody @Valid MissionRequestDTO.ChallengeDTO request
-    ){
+    ) {
         MemberMission memberMission = missionCommandService.challengeMission(request);
         return ApiResponse.onSuccess(MissionSuccessCode.ADD, MissionConverter.toChallengeMissionResultDTO(memberMission));
+    }
+
+
+
+    @GetMapping("/members/missions")
+    @Operation(summary = "내가 진행중인 미션 목록 조회 API", description = "진행중인 미션을 10개씩 조회합니다.")
+    @Parameters({
+            @Parameter(name = "memberId", description = "사용자 ID"),
+            @Parameter(name = "page", description = "페이지 번호 (1 이상)")
+    })
+    public ApiResponse<MissionResponseDTO.MyMissionPreviewListDTO> getMyMissions(
+            @RequestParam(name = "memberId") Long memberId,
+            @CheckPage @RequestParam(name = "page") Integer page
+    ) {
+        // 1. Service에서 엔티티 Page를 받아옴 (Page<MemberMission>)
+        Page<MemberMission> missionPage = memberQueryService.getMyChallengingMissions(memberId, page);
+
+        // 2. MemberMission 엔티티 페이지를 DTO로 변환
+        // (MemberMission 객체에 상태 정보가 있으므로, map(MemberMission::getMission)을 하지 않고 그대로 넘깁니다.)
+        return ApiResponse.onSuccess(MemberSuccessCode.FOUND, MissionConverter.toMyMissionPreviewListDTO(missionPage));
+    }
+
+    @PatchMapping("/missions/{memberMissionId}/complete")
+    @Operation(summary = "미션 완료 API", description = "진행중인 미션을 완료 상태로 변경합니다.")
+    public ApiResponse<MissionResponseDTO.MissionCompleteDTO> completeMission(
+            @PathVariable(name = "memberMissionId") Long memberMissionId
+    ) {
+        // 서비스를 통해 완료 처리된 엔티티를 받아옴
+        MemberMission completedMission = missionCommandService.completeMission(memberMissionId);
+
+        // 엔티티를 DTO로 변환하여 응답 (SuccessCode는 상황에 맞게 변경 가능)
+        return ApiResponse.onSuccess(MissionSuccessCode.COMPLETE, MissionConverter.toMissionCompleteDTO(completedMission));
     }
 }

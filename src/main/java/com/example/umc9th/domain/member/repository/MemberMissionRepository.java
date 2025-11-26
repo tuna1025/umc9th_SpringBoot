@@ -2,6 +2,7 @@ package com.example.umc9th.domain.member.repository;
 
 import com.example.umc9th.domain.member.entity.Member;
 import com.example.umc9th.domain.member.entity.mapping.MemberMission;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface MemberMissionRepository extends JpaRepository<MemberMission, String> {
+public interface MemberMissionRepository extends JpaRepository<MemberMission, Long> {
     /*
     SELECT
     um.id AS user_mission_id,
@@ -42,4 +43,7 @@ public interface MemberMissionRepository extends JpaRepository<MemberMission, St
 
     // 이미 도전중인지 확인
     boolean existsByMemberIdAndMissionId(Long memberId, Long missionId);
+
+    // 진행중인 미션 조회
+    Page<MemberMission> findAllByMemberIdAndIsComplete(Long memberId, boolean isComplete, Pageable pageable);
 }

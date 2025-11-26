@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class MissionCommandServiceImpl implements MissionCommandService {
 
     private final MissionRepository missionRepository;
@@ -26,6 +25,7 @@ public class MissionCommandServiceImpl implements MissionCommandService {
     private final MemberMissionRepository memberMissionRepository;
 
     @Override
+    @Transactional
     public MemberMission challengeMission(MissionRequestDTO.ChallengeDTO request) {
 
         // 이미 도전중인지 확인
@@ -45,5 +45,16 @@ public class MissionCommandServiceImpl implements MissionCommandService {
 
         // 저장 및 반환
         return memberMissionRepository.save(memberMission);
+    }
+
+    @Override
+    @Transactional
+    public MemberMission completeMission(Long memberMissionId) {
+        MemberMission memberMission = memberMissionRepository.findById(memberMissionId)
+                .orElseThrow(() -> new MissionException(MissionErrorCode.NOT_FOUND));
+
+        memberMission.complete(); // true로 변경
+
+        return memberMission; //변경된 상태를 가진 엔티티를 그대로 반환
     }
 }

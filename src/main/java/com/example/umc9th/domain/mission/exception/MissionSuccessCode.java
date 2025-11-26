@@ -13,7 +13,9 @@ public enum MissionSuccessCode implements BaseSuccessCode {
     ADD(HttpStatus.OK,
             "MISSION200_1",
             "성공적으로 미션을 추가하였습니다."),
+    COMPLETE(HttpStatus.OK,"MISSION200_2","미션 완료"),
     ;
+
 
     private final HttpStatus status;
     private final String code;
