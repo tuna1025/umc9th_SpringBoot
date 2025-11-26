@@ -34,4 +34,23 @@ public class MissionResponseDTO {
             Boolean isFirst,
             Boolean isLast
     ){}
+
+    @Builder
+    public record MyMissionPreviewDTO(
+            Long missionId,
+            String storeName,
+            Integer point,
+            String content,
+            String status // 진행중 or 성공
+    ){}
+
+    @Builder
+    public record MyMissionPreviewListDTO(
+            List<MyMissionPreviewDTO> missionList,
+            Integer listSize,
+            Integer totalPage,
+            Long totalElements,
+            Boolean isFirst,
+            Boolean isLast
+    ){}
 }

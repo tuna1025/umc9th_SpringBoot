@@ -1,6 +1,8 @@
 package com.example.umc9th.domain.mission.controller;
 
+import com.example.umc9th.domain.member.Exception.MemberSuccessCode;
 import com.example.umc9th.domain.member.entity.mapping.MemberMission;
+import com.example.umc9th.domain.member.service.query.MemberQueryService;
 import com.example.umc9th.domain.mission.converter.MissionConverter;
 import com.example.umc9th.domain.mission.dto.request.MissionRequestDTO;
 import com.example.umc9th.domain.mission.dto.response.MissionResponseDTO;
@@ -15,6 +17,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,6 +26,7 @@ public class MissionController {
 
     private final MissionCommandService missionCommandService;
     private final StoreQueryService storeQueryService;
+    private final MemberQueryService memberQueryService;
 
     @PostMapping("/missions/challenge")
     public ApiResponse<MissionResponseDTO.ChallengeMissionResultDTO> challengeMission(
@@ -47,6 +51,24 @@ public class MissionController {
 
         // 응답 반환
         return ApiResponse.onSuccess(GeneralSuccessCode.OK, missionList);
+    }
+
+    @GetMapping("/members/missions")
+    @Operation(summary = "내가 진행중인 미션 목록 조회 API", description = "진행중인 미션을 10개씩 조회합니다.")
+    @Parameters({
+            @Parameter(name = "memberId", description = "사용자 ID"),
+            @Parameter(name = "page", description = "페이지 번호 (1 이상)")
+    })
+    public ApiResponse<MissionResponseDTO.MyMissionPreviewListDTO> getMyMissions(
+            @RequestParam(name = "memberId") Long memberId,
+            @CheckPage @RequestParam(name = "page") Integer page
+    ) {
+        // 1. Service에서 엔티티 Page를 받아옴 (Page<MemberMission>)
+        Page<MemberMission> missionPage = memberQueryService.getMyChallengingMissions(memberId, page);
+
+        // 2. MemberMission 엔티티 페이지를 DTO로 변환
+        // (MemberMission 객체에 상태 정보가 있으므로, map(MemberMission::getMission)을 하지 않고 그대로 넘깁니다.)
+        return ApiResponse.onSuccess(MemberSuccessCode.FOUND, MissionConverter.toMyMissionPreviewListDTO(missionPage));
     }
 
 }

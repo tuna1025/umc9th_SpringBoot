@@ -53,4 +53,30 @@ public class MissionConverter {
                 .missionList(missionPreviewDTOList)
                 .build();
     }
+
+    public static MissionResponseDTO.MyMissionPreviewDTO toMyMissionPreviewDTO(MemberMission memberMission) {
+        return MissionResponseDTO.MyMissionPreviewDTO.builder()
+                .missionId(memberMission.getMission().getId())
+                .storeName(memberMission.getMission().getStore().getName())
+                .point(memberMission.getMission().getPoint())
+                .content(memberMission.getMission().getContent())
+                .status(memberMission.getIsComplete() ? "성공" : "진행중") // 상태 결정 로직
+                .build();
+    }
+
+    public static MissionResponseDTO.MyMissionPreviewListDTO toMyMissionPreviewListDTO(Page<MemberMission> missionPage) {
+        List<MissionResponseDTO.MyMissionPreviewDTO> myMissionPreviewDTOList = missionPage.stream()
+                .map(MissionConverter::toMyMissionPreviewDTO)
+                .collect(Collectors.toList());
+
+        return MissionResponseDTO.MyMissionPreviewListDTO.builder()
+                .isLast(missionPage.isLast())
+                .isFirst(missionPage.isFirst())
+                .totalPage(missionPage.getTotalPages())
+                .totalElements(missionPage.getTotalElements())
+                .listSize(myMissionPreviewDTOList.size())
+                .missionList(myMissionPreviewDTOList)
+                .build();
+    }
+
 }
