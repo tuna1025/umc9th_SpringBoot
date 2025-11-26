@@ -79,4 +79,12 @@ public class MissionConverter {
                 .build();
     }
 
+    public static MissionResponseDTO.MissionCompleteDTO toMissionCompleteDTO(MemberMission memberMission) {
+        return MissionResponseDTO.MissionCompleteDTO.builder()
+                .memberMissionId(memberMission.getId())
+                .missionStatus(memberMission.getIsComplete() ? "성공" : "진행중")
+                .missionId(memberMission.getMission().getId())
+                .rewardPoint(memberMission.getMission().getPoint()) // 미션 완료로 얻은 포인트
+                .build();
+    }
 }

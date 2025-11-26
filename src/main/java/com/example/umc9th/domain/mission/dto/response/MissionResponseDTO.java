@@ -53,4 +53,12 @@ public class MissionResponseDTO {
             Boolean isFirst,
             Boolean isLast
     ){}
+
+    @Builder
+    public record MissionCompleteDTO(
+            Long memberMissionId,
+            String missionStatus, // "성공" 등 상태 표시
+            Long missionId,
+            Integer rewardPoint   // 획득한 포인트 등 정보 표시
+    ){}
 }

@@ -25,33 +25,17 @@ import org.springframework.web.bind.annotation.*;
 public class MissionController {
 
     private final MissionCommandService missionCommandService;
-    private final StoreQueryService storeQueryService;
     private final MemberQueryService memberQueryService;
 
     @PostMapping("/missions/challenge")
     public ApiResponse<MissionResponseDTO.ChallengeMissionResultDTO> challengeMission(
             @RequestBody @Valid MissionRequestDTO.ChallengeDTO request
-    ){
+    ) {
         MemberMission memberMission = missionCommandService.challengeMission(request);
         return ApiResponse.onSuccess(MissionSuccessCode.ADD, MissionConverter.toChallengeMissionResultDTO(memberMission));
     }
 
-    @GetMapping("/stores/{storeId}/missions")
-    @Operation(summary = "특정 가게의 미션 목록 조회 API", description = "특정 가게의 미션을 쿼리 스트링으로 받은 페이지 번호(1 이상)에 따라 10개씩 조회합니다.")
-    @Parameters({
-            @Parameter(name = "storeId", description = "가게의 아이디, path variable 입니다."),
-            @Parameter(name = "page", description = "페이지 번호, 1번이 1 페이지 입니다.")
-    })
-    public ApiResponse<MissionResponseDTO.MissionPreviewListDTO> getMissions(
-            @PathVariable(name = "storeId") Long storeId,
-            @CheckPage @RequestParam(name = "page") Integer page
-    ) {
-        // 서비스 호출 (이미 DTO로 변환되어 반환됨)
-        MissionResponseDTO.MissionPreviewListDTO missionList = storeQueryService.getMissionList(storeId, page);
 
-        // 응답 반환
-        return ApiResponse.onSuccess(GeneralSuccessCode.OK, missionList);
-    }
 
     @GetMapping("/members/missions")
     @Operation(summary = "내가 진행중인 미션 목록 조회 API", description = "진행중인 미션을 10개씩 조회합니다.")
@@ -71,4 +55,15 @@ public class MissionController {
         return ApiResponse.onSuccess(MemberSuccessCode.FOUND, MissionConverter.toMyMissionPreviewListDTO(missionPage));
     }
 
+    @PatchMapping("/missions/{memberMissionId}/complete")
+    @Operation(summary = "미션 완료 API", description = "진행중인 미션을 완료 상태로 변경합니다.")
+    public ApiResponse<MissionResponseDTO.MissionCompleteDTO> completeMission(
+            @PathVariable(name = "memberMissionId") Long memberMissionId
+    ) {
+        // 서비스를 통해 완료 처리된 엔티티를 받아옴
+        MemberMission completedMission = missionCommandService.completeMission(memberMissionId);
+
+        // 엔티티를 DTO로 변환하여 응답 (SuccessCode는 상황에 맞게 변경 가능)
+        return ApiResponse.onSuccess(MissionSuccessCode.COMPLETE, MissionConverter.toMissionCompleteDTO(completedMission));
+    }
 }

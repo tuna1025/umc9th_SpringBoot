@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface MemberMissionRepository extends JpaRepository<MemberMission, String> {
+public interface MemberMissionRepository extends JpaRepository<MemberMission, Long> {
     /*
     SELECT
     um.id AS user_mission_id,
