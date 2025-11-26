@@ -25,7 +25,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     @Override
     public Member getMyPageInfo(Long memberId) {
         return memberRepository.findMyPageInfo(memberId)
-                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(MemberErrorCode.NOT_FOUND));
     }
 
     @Override
